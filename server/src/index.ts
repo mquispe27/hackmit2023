@@ -6,11 +6,28 @@ import cors from "cors";
 import { getUser } from "@/utils/global";
 import { corsOptions } from "@/config/cors";
 import { errorHandler } from "./utils/middleware";
-import { auth, services, profile, orders, items, cart } from "@/routes";
+import {
+  auth,
+  services,
+  profile,
+  orders,
+  items,
+  cart,
+  textToSpeech,
+  chatbot,
+} from "@/routes";
+import http from "http";
+import { Server } from "socket.io";
+import { attachSocketLogic } from "./sockets";
 
 const prisma = new PrismaClient();
 const app = express();
 const port = process.env.PORT;
+
+const server = http.createServer(app);
+const io = new Server(server);
+
+attachSocketLogic(io);
 
 app.disable("x-powered-by");
 app.set("trust proxy", 1);
@@ -36,4 +53,4 @@ app.use("/profile", profile);
 
 app.use(errorHandler);
 
-app.listen(port, () => console.log(`🚀 Server listening on port ${port}.`));
+server.listen(port, () => console.log(`🚀 Server listening on port ${port}.`));
