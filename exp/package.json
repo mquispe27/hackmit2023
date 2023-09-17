@@ -2,7 +2,6 @@
   "name": "node-typescript-boilerplate",
   "version": "0.0.0",
   "description": "Minimalistic boilerplate to quick-start Node.js development in TypeScript.",
-  "type": "module",
   "engines": {
     "node": ">= 18.12 <19"
   },
@@ -22,7 +21,7 @@
     "typescript": "~5.1"
   },
   "scripts": {
-    "start": "node build/src/main.js",
+    "start": "npm run build && node build/src/main.js",
     "clean": "rimraf coverage build tmp",
     "prebuild": "npm run lint",
     "build": "tsc -p tsconfig.json",
@@ -36,6 +35,9 @@
   "author": "Jakub Synowiec <jsynowiec@users.noreply.github.com>",
   "license": "Apache-2.0",
   "dependencies": {
+    "@google-cloud/text-to-speech": "^5.0.1",
+    "dotenv": "^16.3.1",
+    "long": "^5.2.3",
     "tslib": "~2.6"
   },
   "volta": {
