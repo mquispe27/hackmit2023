@@ -20,7 +20,7 @@ const client = new textToSpeech.TextToSpeechClient({
 });
 console.log('GAPI', process.env);
 
-export const convertTextToSpeech = async (text: string, language: string) => {
+export const convertTextToSpeech = async (text: string, language: string, speakerProfile: PersonProfile) => {
   const ttsRequest: protos.google.cloud.texttospeech.v1.ISynthesizeSpeechRequest =
     {
       input: { text },
