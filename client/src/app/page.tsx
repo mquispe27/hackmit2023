@@ -1,6 +1,53 @@
-import Image from 'next/image'
+"use client";
+import Image from 'next/image';
+import React, { useState, ChangeEvent } from 'react';
 
 export default function Home() {
+  const [translateInput, setTranslateInput] = useState("");
+  const [translateOutput, setTranslateOutput] = useState("");
+  const [languageInput, setLanguageInput] = useState("en");
+  const [languageOutput, setLanguageOutput] = useState("es");
+  const handleLanguageInputChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setLanguageInput(event.target.value);
+    translateText(translateInput, event.target.value, languageOutput);
+  };
+  const handleLanguageOutputChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setLanguageOutput(event.target.value);
+    translateText(translateInput, languageInput, event.target.value);
+  };
+
+  const handleTranslateInputChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    // Update the state variable with the input value
+    setTranslateInput(event.target.value);
+    translateText(event.target.value, languageInput, languageOutput);
+  };
+
+  const translateText = (async (inputText: string, inputLanguage: string, outputLanguage: string ) => {
+    try {
+      const response = await fetch('/api/basicTranslateRequest', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text: inputText, languageInput: inputLanguage, languageOutput: outputLanguage  }),
+      });
+  
+      if (response.ok) {
+        const translationResult = await response.json();
+        setTranslateOutput(translationResult);
+      } else {
+        // Handle error here
+        console.error('API request failed:', response.status, response.statusText);
+        setTranslateOutput("");
+      }
+    } catch (error) {
+      // Handle fetch or other errors
+      console.error('API request error:', error);
+      setTranslateOutput("");
+    }
+  });
+
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
@@ -38,6 +85,29 @@ export default function Home() {
           priority
         />
       </div>
+      <select className={`mb-3 text-2xl font-semibold`} id="input-language" value={languageInput} onChange={handleLanguageInputChange}>
+        <option value="en">ENGLISH</option>
+        <option value="es">SPANISH</option>
+        <option value="it">ITALIAN</option>
+      </select>
+      <div>
+        <textarea type="text" name="language-input" onChange={handleTranslateInputChange} />
+      </div>
+       <>
+       -----
+       </>
+      <select className={`mb-3 text-2xl font-semibold`} id="input-language" value={languageOutput} onChange={handleLanguageOutputChange}>
+        <option value="en">ENGLISH</option>
+        <option value="es">SPANISH</option>
+        <option value="it">ITALIAN</option>
+      </select>
+      <div>
+       <form>
+        <textarea name="language-output" value={translateOutput} />
+       </form>
+      </div>
+      
+
 
       <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
         <a
@@ -111,3 +181,7 @@ export default function Home() {
     </main>
   )
 }
+function async(arg0: (inputText: string) => void) {
+  throw new Error('Function not implemented.');
+}
+
