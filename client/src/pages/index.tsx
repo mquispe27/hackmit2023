@@ -2,8 +2,10 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import Header from "../components/header";
 import InfoBox from "../components/info-box";
+import {Recorder} from "../components/Recorder";
 
 const MacBookPro142: NextPage = () => {
+  
   return (
     <div className="relative [background:linear-gradient(#181818,_#181818),_#fff] w-full h-[61.38rem] overflow-hidden text-center text-[2rem] text-white font-manrope">
     <h3

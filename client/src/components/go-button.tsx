@@ -7,7 +7,7 @@ const GoButton: NextPage = () => {
   const router = useRouter();
 
   const onGoButtonClick = useCallback(() => {
-    router.push("/");
+    router.push("/mac-book-pro141");
   }, [router]);
 
   const onEllipseClick = useCallback(() => {
