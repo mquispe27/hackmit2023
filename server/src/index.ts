@@ -33,6 +33,7 @@ app.use('/orders', orders)
 app.use('/items', items)
 app.use('/cart', cart)
 app.use('/profile', profile)
+app.use('/chatbot', chatbot);
 
 app.use(errorHandler)
 
