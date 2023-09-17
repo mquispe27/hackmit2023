@@ -1,6 +1,72 @@
-import Image from 'next/image'
+"use client";
+import Image from "next/image";
+import React, { useState, useEffect, ChangeEvent, useCallback } from "react";
+import { Recorder } from "@/components/Recorder";
 
 export default function Home() {
+  const [translateInput, setTranslateInput] = useState("");
+  const [translateOutput, setTranslateOutput] = useState("");
+  const [languageInput, setLanguageInput] = useState("en");
+  const [languageOutput, setLanguageOutput] = useState("es");
+  const [audio, setAudio] = useState("");
+  const handleLanguageInputChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setLanguageInput(event.target.value);
+    translateText(translateInput, event.target.value, languageOutput);
+  };
+  const handleLanguageOutputChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setLanguageOutput(event.target.value);
+    translateText(translateInput, languageInput, event.target.value);
+  };
+
+  const handleTranslateInputChange = async (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    // Update the state variable with the input value
+    setTranslateInput(event.target.value);
+    translateText(event.target.value, languageInput, languageOutput);
+  };
+
+  const translateText = async (
+    inputText: string,
+    inputLanguage: string,
+    outputLanguage: string
+  ) => {
+    try {
+      const response = await fetch("/api/basicTranslateRequest", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          text: inputText,
+          languageInput: inputLanguage,
+          languageOutput: outputLanguage,
+        }),
+      });
+
+      if (response.ok) {
+        const translationResult = await response.json();
+        setTranslateOutput(translationResult);
+      } else {
+        // Handle error here
+        console.error(
+          "API request failed:",
+          response.status,
+          response.statusText
+        );
+        setTranslateOutput("");
+      }
+    } catch (error) {
+      // Handle fetch or other errors
+      console.error("API request error:", error);
+      setTranslateOutput("");
+    }
+  };
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
@@ -15,7 +81,7 @@ export default function Home() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            By{' '}
+            By{" "}
             <Image
               src="/vercel.svg"
               alt="Vercel Logo"
@@ -27,7 +93,12 @@ export default function Home() {
           </a>
         </div>
       </div>
-
+      <Recorder
+        onRecorded={async (data: string) => {
+          console.log(data);
+          setAudio(data);
+        }}
+      />
       <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
         <Image
           className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
@@ -38,6 +109,42 @@ export default function Home() {
           priority
         />
       </div>
+      <div>
+        <audio src={audio} id="audio" controls></audio>
+      </div>
+      <select
+        className={`mb-3 text-2xl font-semibold`}
+        id="input-language"
+        value={languageInput}
+        onChange={handleLanguageInputChange}
+      >
+        <option value="en">ENGLISH</option>
+        <option value="es">SPANISH</option>
+        <option value="it">ITALIAN</option>
+      </select>
+      <div>
+        <textarea
+          type="text"
+          name="language-input"
+          onChange={handleTranslateInputChange}
+        />
+      </div>
+      <>-----</>
+      <select
+        className={`mb-3 text-2xl font-semibold`}
+        id="input-language"
+        value={languageOutput}
+        onChange={handleLanguageOutputChange}
+      >
+        <option value="en">ENGLISH</option>
+        <option value="es">SPANISH</option>
+        <option value="it">ITALIAN</option>
+      </select>
+      <div>
+        <form>
+          <textarea name="language-output" value={translateOutput} />
+        </form>
+      </div>
 
       <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
         <a
@@ -47,7 +154,7 @@ export default function Home() {
           rel="noopener noreferrer"
         >
           <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
+            Docs{" "}
             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
               -&gt;
             </span>
@@ -64,7 +171,7 @@ export default function Home() {
           rel="noopener noreferrer"
         >
           <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
+            Learn{" "}
             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
               -&gt;
             </span>
@@ -81,7 +188,7 @@ export default function Home() {
           rel="noopener noreferrer"
         >
           <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
+            Templates{" "}
             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
               -&gt;
             </span>
@@ -98,7 +205,7 @@ export default function Home() {
           rel="noopener noreferrer"
         >
           <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
+            Deploy{" "}
             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
               -&gt;
             </span>
@@ -109,5 +216,8 @@ export default function Home() {
         </a>
       </div>
     </main>
-  )
+  );
+}
+function async(arg0: (inputText: string) => void) {
+  throw new Error("Function not implemented.");
 }
