@@ -1,25 +1,16 @@
 import { PrismaClient } from "@prisma/client";
-import express, { Request, Response, NextFunction, text } from "express";
+import express, { Request, Response, NextFunction } from "express";
 import helmet from "helmet";
 import cors from "cors";
 
 import { getUser } from "@/utils/global";
 import { corsOptions } from "@/config/cors";
 import { errorHandler } from "./utils/middleware";
-import {
-  auth,
-  services,
-  profile,
-  orders,
-  items,
-  cart,
-  textToSpeech,
-  chatbot,
-} from "@/routes";
+import { auth, services, profile, orders, items, cart } from "@/routes";
 
 const prisma = new PrismaClient();
 const app = express();
-const port = process.env.PORT || 4000;
+const port = process.env.PORT;
 
 app.disable("x-powered-by");
 app.set("trust proxy", 1);
@@ -42,8 +33,6 @@ app.use("/orders", orders);
 app.use("/items", items);
 app.use("/cart", cart);
 app.use("/profile", profile);
-app.use("/text-to-speech", textToSpeech);
-app.use("/chatbot", chatbot);
 
 app.use(errorHandler);
 
